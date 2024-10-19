@@ -1,20 +1,15 @@
-PREFIX nsvoc: <https://ammar257ammar.github.com/RDFied-datasets/nanosafery_vocabulary:>
-PREFIX bao: <http://www.bioassayontology.org/bao#>
-PREFIX enm: <http://purl.enanomapper.org/onto/>
+PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
-PREFIX dcterms: <http://purl.org/dc/terms/>
 
-select distinct ?s ?typeLabel ?sourceTitle ?sourceDesc ?sourceLicense where {
-
-  ?s a obo:CHEBI_59999.
- 
-  ?s dct:source ?source.
-  ?source dct:title ?sourceTitle.
-  ?source dct:description ?sourceDesc.
-  ?source dct:license ?sourceLicense.
- 
-  ?s dct:type ?type.
-  OPTIONAL{
-	?type rdfs:label ?typeLabel.
-  }
+SELECT DISTINCT ?s ?typeLabel ?sourceTitle ?sourceDesc ?sourceLicense 
+WHERE {
+    ?s  a obo:CHEBI_59999;
+        dct:type ?type;
+        dct:source ?source.
+    ?source dct:title ?sourceTitle;
+            dct:description ?sourceDesc;
+            dct:license ?sourceLicense.
+    OPTIONAL{
+        ?type rdfs:label ?typeLabel.
+    }
 }
