@@ -1,0 +1,30 @@
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX aopo: <http://aopkb.org/aop_ontology#>
+PREFIX sio: <http://semanticscience.org/resource/>
+
+SELECT DISTINCT ?materialType ?adverseOutcomeTitle (count(?ke) as ?keyEventCount) WHERE {
+
+	{
+        SELECT DISTINCT ?materialType WHERE{
+            
+            ?s  a obo:CHEBI_59999 ;
+                rdfs:label ?materialname;
+                dct:type ?materialType.
+		}
+	}
+
+	SERVICE <https://nanosafety.rdf.bigcat-bioinformatics.org/sparql> {
+			?ss dct:type ?materialType;
+			    sio:SIO_000001 ?ke.
+	}
+
+	SERVICE <https://aopwiki.rdf.bigcat-bioinformatics.org/sparql> {
+ 
+        ?aop aopo:has_key_event ?ke ;
+             aopo:has_adverse_outcome ?ao .
+        ?ao dc:title ?adverseOutcomeTitle .
+	}
+} 
+GROUP BY ?materialType ?adverseOutcomeTitle
+ORDER BY ?materialType ?keyEventCount
