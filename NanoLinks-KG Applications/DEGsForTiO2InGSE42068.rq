@@ -1,0 +1,47 @@
+PREFIX bao: <http://www.bioassayontology.org/bao#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX enm: <http://purl.enanomapper.org/onto/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX npo: <http://purl.bioontology.org/ontology/npo#>
+
+SELECT DISTINCT ?geneLabel ?avgExpression WHERE { 
+
+    ?bioassay   rdfs:label ?bioassayLabel;
+                dct:identifier "GSE42068"@en;
+                bao:BAO_0000209 ?mgSampleGroup1.
+                        
+    ?material   dct:type obo:CHEBI_51050; # TiO2 type
+                rdfs:label ?mLabel.
+    
+    ?mgSampleGroup1 a bao:BAO_0000040;
+                    rdfs:label ?mgSampleGroupLabel;
+                    bao:BAO_0000208 ?timeEndpoint;
+                    bao:BAO_0000208 ?concEndpoint;
+                    bao:BAO_0090012 ?material.    
+
+    ?timeEndpoint  a bao:BAO_0002114;
+                   bao:BAO_0002669 ?timeValue;
+                   rdfs:label ?timeLabel.
+
+    ?concEndpoint  a bao:BAO_0000098;
+                   bao:BAO_0002666 ?concValue;
+                   rdfs:label ?concLabel.
+    
+    ?mgContrast a bao:BAO_0000040;
+                    rdfs:label ?mgContrastLabel;
+                    bao:BAO_0095000 ?mgSampleGroup1.
+
+    ?mgDeg a bao:BAO_0000040; # a measure group
+                   bao:BAO_0000211 ?gene; # has target
+                   bao:BAO_0000208 ?deg; # has endpoint
+                   bao:BAO_0000426 ?mgContrast. # derived from
+
+    ?gene a bao:BAO_0000582;
+            rdfs:label ?geneLabel.
+      
+    ?deg bao:BAO_0000108 ?avgExpression.
+     
+     FILTER(?concValue = 100.0 && ?timeValue = 24.0)
+     
+} 
