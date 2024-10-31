@@ -1,0 +1,25 @@
+PREFIX bao: <http://www.bioassayontology.org/bao#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+
+SELECT ?datasetLabel (COUNT(DISTINCT ?species) AS ?speciesCount)
+WHERE { 
+  
+    ?dataset dcat:distribution ?datasetrdf.
+    ?datasetrdf rdfs:label ?datasetLabel.
+
+    ?bioassay dct:source ?datasetrdf;
+              rdf:type  bao:BAO_0000015;
+              bao:BAO_0000205 ?assayFormat.
+
+    ?assayFormat bao:BAO_0002004 ?cellLine.
+  
+    ?cellLine bao:BAO_0090006 ?species. 
+
+    ?species a bao:BAO_0000551;
+             a ?speciesType.
+
+    FILTER (?speciesType NOT IN (bao:BAO_0000551))
+} 
+GROUP BY ?datasetLabel
+ORDER BY ?datasetLabel
