@@ -1,0 +1,53 @@
+PREFIX bao: <http://www.bioassayontology.org/bao#>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT ?gene_species (COUNT(DISTINCT ?gene_id) AS ?geneCount)
+WHERE { 
+
+    {
+        SELECT ?gene_id ?gene_species WHERE{
+            ?gene a bao:BAO_0000582;
+                  dct:identifier ?gene_id.
+            BIND("All species" AS ?gene_species)
+        }
+    }
+    UNION
+    {
+        SELECT ?gene_id ?gene_species WHERE{
+            ?gene a bao:BAO_0000582;
+                  dct:identifier ?gene_id.
+            FILTER(regex(?gene_id, "ENSG"))
+            BIND("Human" AS ?gene_species)
+        }
+    }
+    UNION
+    {
+        SELECT ?gene_id ?gene_species WHERE{
+            ?gene a bao:BAO_0000582;
+                  dct:identifier ?gene_id.
+            FILTER(regex(?gene_id, "ENSMUSG"))
+            BIND("Mouse" AS ?gene_species)
+        }
+    }
+    UNION
+    {
+        SELECT ?gene_id ?gene_species WHERE{
+            ?gene a bao:BAO_0000582;
+                  dct:identifier ?gene_id.
+            FILTER(regex(?gene_id, "ENSRNOG"))
+            BIND("Rat" AS ?gene_species)
+        }
+    }
+    UNION
+    {
+        SELECT ?gene_id ?gene_species WHERE{
+            ?gene a bao:BAO_0000582;
+                  dct:identifier ?gene_id.
+            FILTER(!regex(?gene_id, "ENSG"))
+            FILTER(!regex(?gene_id, "ENSMUSG"))
+            FILTER(!regex(?gene_id, "ENSRNOG"))
+            BIND("Unannotated" AS ?gene_species)
+        }
+    }
+}
+ORDER BY DESC(?geneCount)
