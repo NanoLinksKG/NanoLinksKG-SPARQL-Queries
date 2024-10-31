@@ -1,0 +1,53 @@
+PREFIX bao: <http://www.bioassayontology.org/bao#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX enm: <http://purl.enanomapper.org/onto/>
+PREFIX npo: <http://purl.bioontology.org/ontology/npo#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX efo: <http://www.ebi.ac.uk/efo/>
+
+SELECT DISTINCT ?respValue ?concValue ?bioassay ?material 
+?bioassayLabel ?materialLabel ?cellLineLabel ?organismLabel 
+?datasetTitle ?size
+WHERE { 
+
+    ?bioassay   rdfs:label ?bioassayLabel;
+                bao:BAO_0090012 ?material;
+                bao:BAO_0000205 ?assayFormat;
+                bao:BAO_0000209 ?mgSampleGroup1.
+
+    ?assayFormat bao:BAO_0002004 ?cellLine.
+
+    ?cellLine rdf:type ?cellLineType.
+    
+    ?cellLine bao:BAO_0090006 ?organism;
+              rdfs:label ?cellLineLabel.
+
+    ?organism   a bao:BAO_0000551;
+                rdfs:label ?organismLabel.
+    
+    ?mgSampleGroup1 a bao:BAO_0000040;
+                    bao:BAO_0000208 ?responseEp1 .
+    
+    ?responseEp1 bao:BAO_0000185 ?material;
+                 bao:BAO_0000108 ?respValue;
+                 bao:BAO_0002669 "24"^^xsd:integer;
+                 bao:BAO_0000338 ?concEp.
+
+    VALUES ?mType {npo:NPO_1542}
+    ?material rdfs:label ?materialLabel;
+              dct:type ?mType;
+              dct:source ?dataset;
+              npo:has_quality ?sizeEp.
+
+    ?dataset rdfs:label ?datasetTitle.
+    
+    ?sizeEp a enm:ENM_8000039;
+            bao:BAO_0095007 ?size.
+
+    ?concEp a bao:BAO_0000098;
+        bao:BAO_0002666 ?concValue.
+    
+    FILTER(?concValue >= 1 && ?concValue <= 100)
+
+}
