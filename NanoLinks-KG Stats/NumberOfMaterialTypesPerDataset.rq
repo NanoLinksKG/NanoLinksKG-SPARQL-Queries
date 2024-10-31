@@ -1,0 +1,14 @@
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+
+SELECT ?datasetLabel (COUNT(DISTINCT ?materialType) AS ?materialTypeCount)
+WHERE { 
+  
+    ?dataset dcat:distribution ?datasetrdf.
+    ?datasetrdf rdfs:label ?datasetLabel.
+
+    ?material dct:source ?datasetrdf;
+              dct:type ?materialType.
+} 
+GROUP BY ?datasetLabel
+ORDER BY ?datasetLabel
