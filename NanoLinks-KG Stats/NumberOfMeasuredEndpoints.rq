@@ -1,0 +1,30 @@
+PREFIX bao: <http://www.bioassayontology.org/bao#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+
+SELECT ?datasetLabel(COUNT(?ep) AS ?endpointCount)
+WHERE { 
+
+    ?dataset dcat:distribution ?datasetrdf.
+
+    {
+        ?datasetrdf rdfs:label ?datasetLabel.
+
+        ?bioassay bao:BAO_0000209 ?mg;
+                  dct:source ?datasetrdf.
+    
+        ?mg bao:BAO_0000208 ?ep.
+        ?ep a bao:BAO_0000179.
+
+        FILTER(STR(?datasetLabel) != "Dataset 3")
+    }
+    UNION
+    {
+        VALUES ?datasetLabel {"Dataset 3"@en}
+        ?datasetrdf rdfs:label ?datasetLabel.
+
+        ?ep rdf:type bao:BAO_0002138.
+    }
+} 
+GROUP BY ?datasetLabel
+ORDER BY ?datasetLabel
