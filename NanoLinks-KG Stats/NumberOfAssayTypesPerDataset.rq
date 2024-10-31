@@ -1,0 +1,18 @@
+PREFIX bao: <http://www.bioassayontology.org/bao#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+
+SELECT ?datasetLabel (COUNT(DISTINCT ?assayType) AS ?assayTypeCount)
+WHERE { 
+    ?dataset dcat:distribution ?datasetrdf.
+    ?datasetrdf rdfs:label ?datasetLabel.
+
+    ?bioassay dct:source ?datasetrdf.
+
+    ?bioassay rdf:type  bao:BAO_0000015;
+              rdf:type ?assayType.
+
+    FILTER (?assayType NOT IN (bao:BAO_0000015))
+} 
+GROUP BY ?datasetLabel
+ORDER BY ?datasetLabel
